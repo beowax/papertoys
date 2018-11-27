@@ -15,7 +15,6 @@
 </template>
 
 <script>
-
   // Testing purpose only
   //var title = 'TThis is a text message retured from a function of my 3DComponents.';
 
@@ -201,24 +200,29 @@
         
         // model
         var loader = new THREE.FBXLoader();
-				loader.load( 'static/fbx/cube.fbx', function ( object ) {
+				loader.load( 'static/fbx/Dolphin_Head.fbx', function ( object ) { 
           console.log("Loaded. Adding animation mixer..");
 					object.mixer = new THREE.AnimationMixer( object );
           console.log("Done. Pushing in mixers (" + typeof object.mixer + ")...")
           this.mixers.push( object.mixer );
-          console.log("Added. Creating new clipAction...")
-          var action = object.mixer.clipAction( object.animations[ 0 ] );
-          console.log("Created. Playin...")
-          action.play();
-          console.log("Okay. Playin...")
+          console.log("Added. Creating new clipAction...");
+          console.log('object.mixer ', object.mixer);
+          //var action = object.mixer.clipAction( object.animations[ 0 ] );
+          console.log("Created. Playin...");
+          //action.play();
+          console.log("Okay. Playin...");
           object.traverse( function ( child ) {
 						if ( child.isMesh ) {
 							child.castShadow = true;
 							child.receiveShadow = true;
 						}
-					} );
+          } );
+          
+          object.name = "cubeTest";
           this.scene.add( object );
           console.log("Added");
+
+          console.log(this.scene);
         }.bind(this) );
         
         this.renderer = new THREE.WebGLRenderer({ antialias: true });

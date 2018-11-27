@@ -1,5 +1,5 @@
 window.onload = function(e){ 
-
+    console.log('PAPERTOY LOADED ?');
     var container = document.getElementById('preview');
     
     var scene = new THREE.Scene();
