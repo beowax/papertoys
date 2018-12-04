@@ -1,15 +1,15 @@
 <template>
   <div class="grid-1">
     <div id="preview">
-      <input v-on:input="domagic" v-model="cubeh" type="range" min="0.2" max="1" step="0.01">H : {{ cubeh }}
+      <!--input v-on:input="domagic" v-model="cubeh" type="range" min="0.2" max="1" step="0.01">H : {{ cubeh }}
       <br />
       <input v-on:input="domagic" v-model="cubel" type="range" min="0.2" max="1" step="0.01">L : {{ cubel }}
       <br />
       <input v-on:input="domagic" v-model="cubep" type="range" min="0.2" max="1" step="0.01">P : {{ cubep }}
       <br />
-      <!--input v-on:input="domagic" v-model="zoomlevel" type="range" min="1" max="3" step="0.01">Z : {{ zoomlevel }}
-      <br /-->
-      <button v-on:click="rotate(-90)">&#9664;</button><button v-on:click="rotate(90)">&#9654;</button>
+      <input v-on:input="domagic" v-model="zoomlevel" type="range" min="1" max="3" step="0.01">Z : {{ zoomlevel }}
+      <br />
+      <button v-on:click="rotate(-90)">&#9664;</button><button v-on:click="rotate(90)">&#9654;</button-->
     </div>
   </div> 
 </template>
@@ -64,10 +64,11 @@
               z: 0
             }
           },
+
           mixers : [],
           clock : new THREE.Clock(),
-
-
+          texture : null,
+          fbxIsAnimated : false,
           // On ajuste le niveau de zoom
           count: 0
         }
@@ -134,6 +135,50 @@
         this.container.appendChild(this.renderer.domElement);
         
       },
+      settexture : function() {
+        console.log("Setting textures...");
+        
+        
+        var loader = new THREE.TextureLoader();
+        // load a resource
+        loader.load(
+          // resource URL
+          'static/png/cube.png',
+
+          // onLoad callback
+          function ( texture ) {
+            // in this example we create the material when the texture is loaded
+            this.material = new THREE.MeshBasicMaterial( {
+              map: texture
+            } );
+            this.scene.children.forEach(function(element) {
+            if(element.type == "Group") {
+              element.children[0].material = this.material;
+              console.log("Textured")
+            }
+          }.bind(this));
+
+          }.bind(this),
+
+          // onProgress callback currently not supported
+          undefined,
+
+          // onError callback
+          function ( err ) {
+            console.error( 'An error happened loading texture.' );
+          }
+        );
+
+
+        
+        this.texture = new THREE.TextureLoader().load('static/png/cube.png');
+        this.material = new THREE.MeshBasicMaterial( { map: this.texture } );
+        
+        
+        // Pourchaque enfant de la scene, on cherche le mesh ?
+        
+
+      },
       importbox : function() {
         
         // Initialisation pour les modèles 3D
@@ -170,11 +215,11 @@
 				this.controls.update();
 
         this.scene.background = new THREE.Color( 0xa0a0a0 );
-        this.scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
+        //this.scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
         
         var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
 				light.position.set( 0, 200, 0 );
-				this.scene.add( light );
+				//this.scene.add( light );
 
 				light = new THREE.DirectionalLight( 0xffffff );
 				light.position.set( 0, 200, 100 );
@@ -183,44 +228,58 @@
 				light.shadow.camera.bottom = - 100;
 				light.shadow.camera.left = - 120;
 				light.shadow.camera.right = 120;
-				this.scene.add( light );
+				//this.scene.add( light );
         
         // ground
 				var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
 				mesh.rotation.x = - Math.PI / 2;
 				mesh.receiveShadow = true;
-				this.scene.add( mesh );
+				//this.scene.add( mesh );
 
 				var grid = new THREE.GridHelper( 2000, 20, 0x000000, 0x000000 );
 				grid.material.opacity = 0.2;
 				grid.material.transparent = true;
-        this.scene.add( grid );
+        //this.scene.add( grid );
         
 
         //this.material = new THREE.MeshBasicMaterial({ color: this.materialcolor, fog: true });
         
+
         // model
         var loader = new THREE.FBXLoader();
 				loader.load( 'static/fbx/cube.fbx', function ( object ) {
-          console.log("Loaded. Adding animation mixer..");
+         this.settexture();
+         console.log("Loaded. Adding animation mixer..");
 					object.mixer = new THREE.AnimationMixer( object );
           console.log("Done. Pushing in mixers (" + typeof object.mixer + ")...")
           this.mixers.push( object.mixer );
-          console.log("Added. Creating new clipAction...")
-          var action = object.mixer.clipAction( object.animations[ 0 ] );
-          console.log("Created. Playin...")
-          action.play();
-          console.log("Okay. Playin...")
+          
+          
+          // Si il y a de l'animation dans le FBX
+          if (this.fbxIsAnimated) {
+            console.log("Added. Creating new clipAction...")
+            var action = object.mixer.clipAction( object.animations[ 0 ] );
+            console.log("Created. Playin...")
+            action.play();
+            console.log("Okay. Playin...")
+          } else {
+            console.log("Added.")
+          }
+          
+          
           object.traverse( function ( child ) {
 						if ( child.isMesh ) {
 							child.castShadow = true;
 							child.receiveShadow = true;
 						}
-					} );
+          } );
+          //object.material = this.material;
           this.scene.add( object );
           console.log("Added");
         }.bind(this) );
         
+        
+
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.setPixelRatio( window.devicePixelRatio );
         this.renderer.setSize(this.container.offsetWidth, window.innerHeight);
@@ -254,13 +313,14 @@
 
 
 				requestAnimationFrame( this.animateimport );
-        //console.log("animateimport");
-				if (this.mixers.length > 0 ) {
-					for ( var i = 0; i < this.mixers.length; i ++ ) {
-						this.mixers[ i ].update( this.clock.getDelta() );
-					}
-				}
-
+        
+        if (this.fbxIsAnimated) {
+          if (this.mixers.length > 0 ) {
+				  	for ( var i = 0; i < this.mixers.length; i ++ ) {
+				  		this.mixers[ i ].update( this.clock.getDelta() );
+				  	}
+				  }
+        }
 				this.renderer.render( this.scene, this.camera[0] );
 
 
