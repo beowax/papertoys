@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <p>FOOTER GOES HERE</p>
+    <!--p>FOOTER GOES HERE</p-->
   </footer>
 </template>
 

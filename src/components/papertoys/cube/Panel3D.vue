@@ -206,13 +206,13 @@
         ];
 
         this.camera.forEach(element => {
-          element.position.set( 100, 200, 300 );
-        //this.camera.lookAt(0, 0, 0);
+          element.position.set( 300, 300, 300 );
+          element.lookAt(0, 0, 0);
 				
         });
-				this.controls = new THREE.OrbitControls( this.camera[0] );
-				this.controls.target.set( 0, 100, 0 );
-				this.controls.update();
+				//this.controls = new THREE.OrbitControls( this.camera[0] );
+				//this.controls.target.set( 0, 100, 0 );
+				//this.controls.update();
 
         this.scene.background = new THREE.Color( 0xa0a0a0 );
         //this.scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
@@ -285,6 +285,7 @@
         this.renderer.setSize(this.container.offsetWidth, window.innerHeight);
         this.renderer.shadowMap.enabled = true;
         this.container.appendChild(this.renderer.domElement);
+        
   
         this.animateimport();
         
