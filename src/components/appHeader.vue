@@ -1,11 +1,11 @@
 <template>
   <header>
-    <p>{{ msg }} 
+    <!--p>{{ msg }} 
         <a href="#/">Home</a> 
         <a href="#/2D">2D</a> 
         <a href="#/3D">3D</a> 
         <a href="#/Test">Test</a>  
-    </p>
+    </p-->
   </header>
 </template>
 
