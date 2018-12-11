@@ -26,14 +26,14 @@
       return {
           // 3D useful objects
           cube: null,
-          scene: null,
-          fogColor: null,
+          scene: new THREE.Scene(),
+          fogColor: new THREE.Color(0x0),
           camera: null,
           viewport: null,
-          material: null,
+          material: new THREE.MeshBasicMaterial(),
           bodyGeometry: null,
           myObject: null,
-          renderer: null,
+          renderer: new THREE.WebGLRenderer(),
           zoomlevel: 1,
           controls: null,
           
@@ -67,8 +67,10 @@
 
           mixers : [],
           clock : new THREE.Clock(),
-          texture : null,
+          texture : new THREE.Texture(),
           fbxIsAnimated : false,
+          image : new Image(),
+          //texture: null,
           // On ajuste le niveau de zoom
           count: 0
         }
@@ -90,13 +92,10 @@
         
         // Initialisation pour les modèles 3D
         this.container = document.getElementById('preview');
-        this.scene = new THREE.Scene();
-        this.fogColor = new THREE.Color(0x0);
         this.scene.fog = new THREE.Fog(this.fogColor, 0, 4.5);
         this.scene.background = new THREE.Color(0xf4f6f8);
 
         var viewSize = 2;
-
         this.viewport = {
           viewSize: viewSize,
           aspectRatio: this.container.offsetWidth / window.innerHeight,
@@ -110,8 +109,6 @@
         this.camera = [
           new THREE.OrthographicCamera(this.viewport.left, this.viewport.right, this.viewport.top, this.viewport.bottom, 0.025, 100),
           new THREE.PerspectiveCamera(45, this.viewport.aspectRatio, .5, 100)
-          
-          //, new THREE.OrthographicCamera(-1, 1, 1, -1, 0.025, 100)
         ];
 
         this.camera.forEach(element => {
@@ -121,7 +118,9 @@
         
         
         
-        this.material = new THREE.MeshBasicMaterial({ color: this.materialcolor, fog: true });
+        this.materialcolor.color = this.materialcolor
+        this.materialcolor.fog = true
+
         this.bodyGeometry = new THREE.BoxGeometry(1, 1, 1);
         this.myObject = new THREE.Mesh(this.bodyGeometry, this.material);
         
@@ -130,19 +129,14 @@
         this.myObject.scale.set(this.cubel, this.cubeh, this.cubep);
 
         this.scene.add(this.myObject);
-        this.renderer = new THREE.WebGLRenderer();
+        //this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.container.offsetWidth, window.innerHeight);
         this.container.appendChild(this.renderer.domElement);
         
       },
-      settexture : function() {
-        console.log("Setting textures...");
-        
-        
+      settexture2 : function() {
         var loader = new THREE.TextureLoader();
-        // load a resource
         loader.load(
-          // resource URL
           'static/png/cube.png',
 
           // onLoad callback
@@ -171,159 +165,12 @@
 
 
         
-        this.texture = new THREE.TextureLoader().load('static/png/cube.png');
-        this.material = new THREE.MeshBasicMaterial( { map: this.texture } );
-        
+        //this.texture = new THREE.TextureLoader().load('static/png/cube.png');
+        //this.material = new THREE.MeshBasicMaterial( { map: this.texture } );
+        this.settexture2()
         
         // Pourchaque enfant de la scene, on cherche le mesh ?
         
-
-      },
-      importbox : function() {
-        
-        // Initialisation pour les modèles 3D
-        this.container = document.getElementById('preview');
-        this.scene = new THREE.Scene();
-        
-        //this.fogColor = new THREE.Color(0x0);
-        //this.scene.fog = new THREE.Fog(this.fogColor, 0, 4.5);
-        //this.scene.background = new THREE.Color(0xf4f6f8);
-        var viewSize = 2;
-
-        this.viewport = {
-          viewSize: viewSize,
-          aspectRatio: this.container.offsetWidth / window.innerHeight,
-          left: (-(this.container.offsetWidth / window.innerHeight) * viewSize) / 2,
-          right: ((this.container.offsetWidth / window.innerHeight) * viewSize) / 2,
-          top: viewSize / 2,
-          bottom: -viewSize / 2,
-          near: -100,
-          far: 100
-        };
-        
-        this.camera = [
-            new THREE.PerspectiveCamera( 45, this.viewport.aspectRatio, 1, 2000 )
-        ];
-
-        this.camera.forEach(element => {
-          element.position.set( 300, 300, 300 );
-          element.lookAt(0, 0, 0);
-				
-        });
-				//this.controls = new THREE.OrbitControls( this.camera[0] );
-				//this.controls.target.set( 0, 100, 0 );
-				//this.controls.update();
-
-        this.scene.background = new THREE.Color( 0xa0a0a0 );
-        //this.scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
-        
-        var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-				light.position.set( 0, 200, 0 );
-				//this.scene.add( light );
-
-				light = new THREE.DirectionalLight( 0xffffff );
-				light.position.set( 0, 200, 100 );
-				light.castShadow = true;
-				light.shadow.camera.top = 180;
-				light.shadow.camera.bottom = - 100;
-				light.shadow.camera.left = - 120;
-				light.shadow.camera.right = 120;
-				//this.scene.add( light );
-        
-        // ground
-				var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
-				mesh.rotation.x = - Math.PI / 2;
-				mesh.receiveShadow = true;
-				//this.scene.add( mesh );
-
-				var grid = new THREE.GridHelper( 2000, 20, 0x000000, 0x000000 );
-				grid.material.opacity = 0.2;
-				grid.material.transparent = true;
-        //this.scene.add( grid );
-        
-
-        //this.material = new THREE.MeshBasicMaterial({ color: this.materialcolor, fog: true });
-        
-
-        // model
-        var loader = new THREE.FBXLoader();
-				loader.load( 'static/fbx/cube.fbx', function ( object ) {
-         this.settexture();
-         console.log("Loaded. Adding animation mixer..");
-					object.mixer = new THREE.AnimationMixer( object );
-          console.log("Done. Pushing in mixers (" + typeof object.mixer + ")...")
-          this.mixers.push( object.mixer );
-          
-          
-          // Si il y a de l'animation dans le FBX
-          if (this.fbxIsAnimated) {
-            console.log("Added. Creating new clipAction...")
-            var action = object.mixer.clipAction( object.animations[ 0 ] );
-            console.log("Created. Playin...")
-            action.play();
-            console.log("Okay. Playin...")
-          } else {
-            console.log("Added.")
-          }
-          
-          
-          object.traverse( function ( child ) {
-						if ( child.isMesh ) {
-							child.castShadow = true;
-							child.receiveShadow = true;
-						}
-          } );
-          //object.material = this.material;
-          this.scene.add( object );
-          console.log("Added");
-        }.bind(this) );
-        
-        
-
-        this.renderer = new THREE.WebGLRenderer({ antialias: true });
-        this.renderer.setPixelRatio( window.devicePixelRatio );
-        this.renderer.setSize(this.container.offsetWidth, window.innerHeight);
-        this.renderer.shadowMap.enabled = true;
-        this.container.appendChild(this.renderer.domElement);
-        
-  
-        this.animateimport();
-        
-        
-       
-        
-      },
-      // L'animation
-      rotate : function(howmanydegrees) {
-        this.rotationgenerator.from.time = Date.now();
-        this.rotationgenerator.from.y = this.rotationgenerator.position.y;
-        this.rotationgenerator.destination.y += Math.PI * (howmanydegrees) / 180;
-        this.moving = true;
-        console.log("Début de rotation. Destination : " + this.rotationgenerator.destination.y)
-      },
-      resize() {
-        console.log("Resize window");
-        this.viewport.aspectRatio = this.container.offsetWidth / window.innerHeight
-        this.renderer.setSize(this.container.offsetWidth, window.innerHeight);
-        this.camera.forEach(element => {
-          element.aspect = this.viewport.aspectRatio;
-          element.updateProjectionMatrix();
-        });
-      },
-      animateimport(){
-
-
-				requestAnimationFrame( this.animateimport );
-        
-        if (this.fbxIsAnimated) {
-          if (this.mixers.length > 0 ) {
-				  	for ( var i = 0; i < this.mixers.length; i ++ ) {
-				  		this.mixers[ i ].update( this.clock.getDelta() );
-				  	}
-				  }
-        }
-				this.renderer.render( this.scene, this.camera[0] );
-
 
       },
       animate() {
@@ -371,26 +218,197 @@
       
         
       },
+      settexture : function() {
+        
+        this.image.src = this.$store.state.b64texture;
+        this.texture.image = this.image;
+        this.image.onload = function() {
+          
+          this.texture.needsUpdate = true;
+          this.material = new THREE.MeshBasicMaterial({map: this.texture});
+          this.scene.children.forEach(function(element) {
+            if(element.type == "Group") {
+              element.children[0].material = this.material;
+              element.updateMatrix();
+            }
+          }.bind(this))          
+        }.bind(this);
+      },
+      
+      importbox : function() {
+        
+        // Initialisation pour les modèles 3D
+        this.container = document.getElementById('preview');
+        var viewSize = 2;
+
+        this.viewport = {
+          viewSize: viewSize,
+          aspectRatio: this.container.offsetWidth / window.innerHeight,
+          left: (-(this.container.offsetWidth / window.innerHeight) * viewSize) / 2,
+          right: ((this.container.offsetWidth / window.innerHeight) * viewSize) / 2,
+          top: viewSize / 2,
+          bottom: -viewSize / 2,
+          near: -100,
+          far: 100
+        };
+        
+        this.camera = [
+            new THREE.PerspectiveCamera( 45, this.viewport.aspectRatio, 1, 2000 )
+        ];
+
+        this.camera.forEach(element => {
+          element.position.set( 300, 300, 300 );
+          element.lookAt(0, 0, 0);
+				
+        });
+        
+        //this.controls = new THREE.OrbitControls( this.camera[0] );
+				//this.controls.target.set( 0, 100, 0 );
+				//this.controls.update();
+
+        this.scene.background = new THREE.Color( 0xa0a0a0 );
+        //this.scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
+        
+        var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+				light.position.set( 0, 200, 0 );
+				//this.scene.add( light );
+
+				light = new THREE.DirectionalLight( 0xffffff );
+				light.position.set( 0, 200, 100 );
+				light.castShadow = true;
+				light.shadow.camera.top = 180;
+				light.shadow.camera.bottom = - 100;
+				light.shadow.camera.left = - 120;
+				light.shadow.camera.right = 120;
+				//this.scene.add( light );
+        
+        // ground
+				var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
+				mesh.rotation.x = - Math.PI / 2;
+				mesh.receiveShadow = true;
+				//this.scene.add( mesh );
+
+				var grid = new THREE.GridHelper( 2000, 20, 0x000000, 0x000000 );
+				grid.material.opacity = 0.2;
+				grid.material.transparent = true;
+        //this.scene.add( grid );
+        
+
+        //this.material = new THREE.MeshBasicMaterial({ color: this.materialcolor, fog: true });
+        
+
+        console.info("Importing FBX model...")
+        var loader = new THREE.FBXLoader();
+				loader.load( 'static/fbx/cube.fbx', function ( object ) {
+
+          object.mixer = new THREE.AnimationMixer( object );
+          this.mixers.push( object.mixer );
+          
+          // Si il y a de l'animation dans le FBX
+          if (this.fbxIsAnimated) {
+            var action = object.mixer.clipAction( object.animations[ 0 ] );
+            action.play();
+          } else {
+            console.info("FBX is not animated")
+          }
+
+          object.traverse( function ( child ) {
+            if ( child.isMesh ) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
+
+          this.scene.add(object);
+          this.settexture();
+
+        }.bind(this) );
+        
+        this.renderer.antialias = true;
+        this.renderer.setPixelRatio( window.devicePixelRatio );
+        this.renderer.setSize(this.container.offsetWidth, window.innerHeight);
+        this.renderer.shadowMap.enabled = true;
+
+        this.container.appendChild(this.renderer.domElement);
+
+        this.animateimport();
+      },
+      
+      // L'animation
+      rotate : function(howmanydegrees) {
+        this.rotationgenerator.from.time = Date.now();
+        this.rotationgenerator.from.y = this.rotationgenerator.position.y;
+        this.rotationgenerator.destination.y += Math.PI * (howmanydegrees) / 180;
+        this.moving = true;
+        console.log("Début de rotation. Destination : " + this.rotationgenerator.destination.y)
+      },
+      resize() {
+        console.log("Resize window");
+        this.viewport.aspectRatio = this.container.offsetWidth / window.innerHeight
+        this.renderer.setSize(this.container.offsetWidth, window.innerHeight);
+        this.camera.forEach(element => {
+          element.aspect = this.viewport.aspectRatio;
+          element.updateProjectionMatrix();
+        });
+      },
+      renderview() {
+        this.renderer.render( this.scene, this.camera[0]);
+      },
+      animateimport() {
+        
+        // On rappelle la fonction à chaque itération
+        requestAnimationFrame(this.animateimport);
+        
+        // On joue l'animation du FBX si il existe
+        if (this.fbxIsAnimated) {
+          if (this.mixers.length > 0 ) {
+				  	for ( var i = 0; i < this.mixers.length; i ++ ) {
+				  		this.mixers[ i ].update( this.clock.getDelta() );
+				  	}
+				  }
+        } else {
+          // On peut fire tourner pour animer un peu...
+
+        }
+
+        this.renderer.render( this.scene, this.camera[0]);
+
+      }
     },
     
     // Se lance quand l'objet est prêt
     mounted(){
 
-        //if ( WEBGL.isWebGLAvailable() === false ) {
-        //  document.body.appendChild( WEBGL.getWebGLErrorMessage() );
-        //}
+        if ( WEBGL.isWebGLAvailable() === false ) {
+          document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+        }
 
-        // On contruit la box
-        //this.buildbox();
-        //this.animate();
         // On importe un modèle 3D
         this.importbox();
-        //this.animateimport();
-        // Et on l'anime (le rafraichissement est géré dans la fonction avec requestAnimationFrame)
         
+        // Et on l'anime (le rafraichissement est géré dans la fonction avec requestAnimationFrame)
+        this.animateimport();
+        
+        // On demande le rendu
+        this.renderview();
 
         // On mets en place l'écouteur du resize
         window.addEventListener('resize', this.resize(), false);
+      }, 
+      computed : {
+          getb64texture() {
+          return this.$store.state.b64texture
+          }
+      },
+      watch : {
+        getb64texture(value) {
+          console.log("Watcher : B64texture changed (3D panel) => Updating texture")
+          this.image.src = value;
+          this.texture.image = this.image;
+          this.texture.needsUpdate = true;
+          this.material.map = this.texture;
+          this.renderer.render( this.scene, this.camera[0]);
+        }
       }
-  }
+ }
 </script>

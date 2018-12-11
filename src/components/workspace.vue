@@ -8,6 +8,7 @@
 <script>
   import panel2D from './papertoys/cube/Panel2D.vue'
   import panel3D from './papertoys/cube/Panel3D.vue'
+
   export default {
     name: 'Workspace',
     components: {
@@ -15,6 +16,8 @@
       panel3D
     }
   }
+  
+  
 
 </script>
 
