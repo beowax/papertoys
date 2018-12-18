@@ -377,8 +377,7 @@
     },
     
     // Se lance quand l'objet est prêt
-    mounted(){
-
+    mounted() {
         //if ( WEBGL.isWebGLAvailable() === false ) {
         //  document.body.appendChild( WEBGL.getWebGLErrorMessage() );
         //}

@@ -7,7 +7,8 @@
 </template>
 
 <script>
-  import Toolbar from '../../tools/Toolbar.vue'
+  import Toolbar from '../../tools/Toolbar.vue';
+  import axios from 'axios';
   export default {
     name: 'Panel2D',
     // donnée base64 à ajouter et mapper avec le panel3D
@@ -15,7 +16,9 @@
         return {
           stage: null,
           container: null,
-          canvas: null
+          canvas: null,
+          context:null,
+          mapBase64:null
         }
       },
     components: {
@@ -38,12 +41,14 @@
       // ON crée le canevas à la volée
       this.container = document.getElementById('pattern');
       this.canvas = document.createElement('canvas');
-        canvas.id     = "canevas2d";
-        canvas.width  = this.container.offsetWidth;
-        canvas.height = window.innerHeight;
-        canvas.style.zIndex   = 8;
-        canvas.classList.add("dropzone");
-      this.container.appendChild(canvas);
+      this.canvas.id     = "canevas2d";
+      this.canvas.width  = this.container.offsetWidth;
+      this.canvas.height = window.innerHeight;
+      this.canvas.style.zIndex   = 8;
+      this.canvas.classList.add("dropzone");
+      this.context = this.canvas.getContext("2d");
+
+      this.container.appendChild(this.canvas);
 
       //Create a stage by getting a reference to the canvas
       this.stage = new createjs.Stage("canevas2d");
@@ -129,9 +134,24 @@
      
     },
     methods: {
-      updateCanvas: function(){
+      updateCanvas: function() {
         this.stage.update();
-
+        this.mapBase64 = this.canvas.toDataURL();
+        console.log(this.mapBase64);
+        //this.context.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
+        paperStore.commit('base64');
+      },
+      postThing: function() {
+        axios.post('/user', {
+          firstName: 'Fred',
+          lastName: 'Flintstone'
+        })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
       }
     }
   }
