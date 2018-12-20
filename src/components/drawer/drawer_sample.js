@@ -102,7 +102,7 @@ export default {
                 } else {
                     var pt = new createjs.Point(this.stage.mouseX, this.stage.mouseY);
                 }
-                var midPoint = new createjs.Point(this.oldX + pt.x >> 1, this.oldY + pt.y >> 1);
+                var midPoint = new createjs.Point(this.oldX + pt.x c, this.oldY + pt.y >> 1);
                 if (typeof this.currentShape[this.currentShape.length - 1] != "undefined") {
                     this.currentShape[this.currentShape.length - 1].graphics.setStrokeStyle(this.pencil.size, this.pencil.stylingW, this.pencil.stylingH);
                     this.currentShape[this.currentShape.length - 1].graphics.moveTo(midPoint.x, midPoint.y);
