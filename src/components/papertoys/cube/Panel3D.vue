@@ -113,7 +113,7 @@
 
         this.camera.forEach(element => {
           element.position.set(14, 14, 14);
-          element.lookAt(0, 0, 0);
+          element.lookAt(1, 1, 1);
         });
         
         
@@ -218,6 +218,8 @@
       
         
       },
+
+
       settexture : function() {
         
         this.image.src = this.$store.state.b64texture;
@@ -257,16 +259,16 @@
         ];
 
         this.camera.forEach(element => {
-          element.position.set( 300, 300, 300 );
-          element.lookAt(0, 0, 0);
+          element.position.set( 300, 400, 300 );
+          element.lookAt(150, 150, 150);
 				
         });
         
-        //this.controls = new THREE.OrbitControls( this.camera[0] );
-				//this.controls.target.set( 0, 100, 0 );
-				//this.controls.update();
+        this.controls = new THREE.OrbitControls( this.camera[0],  document.getElementById('preview'));
+				this.controls.target.set( 0, 100, 0 );
+				this.controls.update();
 
-        this.scene.background = new THREE.Color( 0xa0a0a0 );
+        this.scene.background = new THREE.Color( 0xffbeb9 );
         //this.scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
         
         var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
@@ -402,7 +404,7 @@
       },
       watch : {
         getb64texture(value) {
-          console.log("Watcher : B64texture changed (3D panel) => Updating texture")
+          //console.log("Watcher : B64texture changed (3D panel) => Updating texture")
           this.image.src = value;
           this.texture.image = this.image;
           this.texture.needsUpdate = true;
