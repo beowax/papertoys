@@ -71,12 +71,13 @@ export default {
 
     },
     methods: {
-        toggleDrawmode() {
+        /*toggleDrawmodetoggleDrawmode() {
             //this.isActive = !this.isActive;
             
             this.$store.commit('updatedrawmode', {drawmode: !this.isDrawmode})
             //document.querySelector(".svgClass").getSVGDocument().getElementById("svgInternalID").setAttribute("fill", this.color[this.isActive])
-        },
+        },*/
+
         /*set_pencil (params) {
             $.each(_.keys(params), $.proxy(function (index, param) {
                 this.pencil[param] = params[param];
@@ -118,7 +119,7 @@ export default {
                 };
             }, this);
             this.stage.on("stagemouseup", function (evt) {
-                if(!this.isDrawmode) return false;
+                //if(!this.isDrawmode) return false;
                 this.isMouseDown = false;
             }, this);
         },

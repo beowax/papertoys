@@ -2,7 +2,7 @@
   <div id="draggable">
     <img src="/static/toolbar/draggable/eyes/eye-1.svg" draggable="false" height="30" width="30" />
     <div id="draggable-tools" draggable="false">
-      <img v-for="eye in this.items.eyes" :src="eye.src" class="draggable" draggable="true" v-bind:height="iconSize" v-bind:width="iconSize" :data-original-size="eye.originalSize"/>
+      <img v-for="eye in this.items.eyes" v-bind:key="eye.index" :src="eye.src" class="draggable" draggable="true" v-bind:height="iconSize" v-bind:width="iconSize" :data-original-size="eye.originalSize"/>
     </div>
   </div>
 </template>
@@ -28,20 +28,20 @@
         this.$store.commit('updatedrawmode', {drawmode: false})
         if (!this.isDrawmode) {
           // The dataTransfer.setData() method sets the data type and the value of the dragged data
-          console.debug(event)
+          //console.debug(event)
           //console.log("event.pageX:"+event.pageX+" // event.pageY:"+event.pageY)
-          var draggedData = '{'+
+          /*var draggedData = '{'+
             '"posX":"' + event.pageX + '" ,' +
             '"posY":"' + event.pageY + '" ,' +
             '"src":"' + event.target.src + '",' +
             '"ratio":"' + (30 / event.target.dataset.originalSize) + '"' +
-          '}';
-          console.debug(draggedData)
+          '}';*/
+          //console.debug(draggedData)
           var draggedData = '{'+
             '"posX":"' + event.offsetX + '" ,' +
             '"posY":"' + event.offsetY + '" ,' +
             '"src":"' + event.target.src + '",' +
-            '"ratio":"' + (30 / event.target.dataset.originalSize) + '"' +
+            '"ratio":"' + (this.iconSize / event.target.dataset.originalSize) + '"' +
           '}';
           console.debug(draggedData)
           event.dataTransfer.setData("draggedData", draggedData);
@@ -89,8 +89,8 @@
         if (!this.isDrawmode) {
           event.preventDefault();
           if (event.target.className == "dropzone" ) {
-            event.target.style.background = "";
 
+            event.target.style.background = "";
             var draggedData = JSON.parse(event.dataTransfer.getData("draggedData"));
             var bitmapInstance = new createjs.Bitmap(draggedData.src);
             var self = this;
@@ -104,16 +104,11 @@
             this.container.addChild(bitmapInstance);
 
             bitmapInstance.on("mousedown", function (evt) {
-              console.log("Mousedown")
               self.$store.commit('updatedrawmode', {drawmode: false})
               if (!self.isDrawmode) {
                 this.parent.addChild(this);
                 this.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
               }
-            });
-            bitmapInstance.on("mouseup", function (evt) {
-              console.log("Mouseup")
-              self.$store.commit('updatedrawmode', {drawmode: true})
             });
 
             // the pressmove event is dispatched when the mouse moves after a mousedown on the target until the mouse is released.
@@ -124,6 +119,11 @@
                 self.updateCanvas();
               }
             });
+            
+            bitmapInstance.on("pressup", function(evt) {
+              console.log("pressup")
+              self.$store.commit('updatedrawmode', {drawmode: true})
+            })
 
             // Au survol
             bitmapInstance.on("rollover", function (evt) {
