@@ -14,7 +14,7 @@
     name: 'appHeader',
     data () {
       return {
-      msg: 'This message comes from Header component (included in App.js).'
+        msg: 'This message comes from Header component (included in App.js).'
       }
     }
   }

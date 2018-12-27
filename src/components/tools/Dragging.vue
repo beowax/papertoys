@@ -1,26 +1,49 @@
 <template>
-  <img v-bind:src="plop" class="draggable" draggable="true" height="30" width="30" />
+  <div id="draggable">
+    <img src="/static/toolbar/draggable/eyes/eye-1.svg" draggable="false" height="30" width="30" />
+    <div id="draggable-tools" draggable="false">
+      <img v-for="eye in this.items.eyes" :src="eye.src" class="draggable" draggable="true" v-bind:height="iconSize" v-bind:width="iconSize" :data-original-size="eye.originalSize"/>
+    </div>
+  </div>
 </template>
 
 <script>
   export default {
     props: ['plop'],
-    name: 'Tool',
+    name: 'Dragging',
     data () {
       return {
-        noplop: '#'
+        noplop: '#',
+        iconSize: 30,
+        items:{
+          eyes:[
+            { src: "/static/toolbar/draggable/eyes/eye-1.svg", originalSize: "340" },
+            { src: "/static/toolbar/draggable/eyes/eye-2.svg", originalSize: "512" }
+          ]
+        }
       }
     },
     mounted() {
       document.addEventListener("dragstart", function(event) {
+        this.$store.commit('updatedrawmode', {drawmode: false})
         if (!this.isDrawmode) {
           // The dataTransfer.setData() method sets the data type and the value of the dragged data
+          console.debug(event)
+          //console.log("event.pageX:"+event.pageX+" // event.pageY:"+event.pageY)
           var draggedData = '{'+
-          '"posX":"' + event.pageX + '" ,' +
-          '"posY":"' + event.pageY + '" ,' +
-          '"src":"' + event.target.src + '"' +
+            '"posX":"' + event.pageX + '" ,' +
+            '"posY":"' + event.pageY + '" ,' +
+            '"src":"' + event.target.src + '",' +
+            '"ratio":"' + (30 / event.target.dataset.originalSize) + '"' +
           '}';
-
+          console.debug(draggedData)
+          var draggedData = '{'+
+            '"posX":"' + event.offsetX + '" ,' +
+            '"posY":"' + event.offsetY + '" ,' +
+            '"src":"' + event.target.src + '",' +
+            '"ratio":"' + (30 / event.target.dataset.originalSize) + '"' +
+          '}';
+          console.debug(draggedData)
           event.dataTransfer.setData("draggedData", draggedData);
 
           // Output some text when starting to drag the p element
@@ -49,9 +72,11 @@
 
       // Ce qui se passe à la fin du drag/drop
       document.addEventListener("dragend", function(event) {
-        if (!this.isDrawmode) {
-          event.target.style.opacity = "1";
-        }
+        this.$store.commit('updatedrawmode', {drawmode: true})
+        event.target.style.opacity = "1";
+        //if (!this.isDrawmode) {  
+        //  event.target.style.opacity = "1";
+        //}
       }.bind(this));
 
       // By default, data/elements cannot be dropped in other elements
@@ -72,14 +97,23 @@
 
             bitmapInstance.x = event.pageX - document.getElementById('canvas2d').offsetLeft - draggedData.posX +1;
             bitmapInstance.y = event.pageY - document.getElementById('canvas2d').offsetTop - draggedData.posY +1;
-            bitmapInstance.scale = 30/340;
+            
+            // On va devoir rendre ca dynamique ou mettre tous les stickers aux mêmes dimensions...
+            bitmapInstance.scale = draggedData.ratio;
+            
             this.container.addChild(bitmapInstance);
 
             bitmapInstance.on("mousedown", function (evt) {
+              console.log("Mousedown")
+              self.$store.commit('updatedrawmode', {drawmode: false})
               if (!self.isDrawmode) {
                 this.parent.addChild(this);
                 this.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
               }
+            });
+            bitmapInstance.on("mouseup", function (evt) {
+              console.log("Mouseup")
+              self.$store.commit('updatedrawmode', {drawmode: true})
             });
 
             // the pressmove event is dispatched when the mouse moves after a mousedown on the target until the mouse is released.
@@ -87,9 +121,20 @@
               if (!self.isDrawmode) {
                 this.x = evt.stageX + this.offset.x;
                 this.y = evt.stageY + this.offset.y;
-                // KO : this ne peut pas être bindé comme ça... :(
                 self.updateCanvas();
               }
+            });
+
+            // Au survol
+            bitmapInstance.on("rollover", function (evt) {
+              console("Survol");
+              this.scale = this.originalScale * 1.2;
+              self.updateCanvas();
+            });
+
+            bitmapInstance.on("rollout", function (evt) {
+              this.scale = this.originalScale;
+              self.updateCanvas();
             });
 
             // On ajoute l'image qu'on a droppé
@@ -99,6 +144,7 @@
             this.updateCanvas();
 
           }
+          //this.$store.commit('updatedrawmode', {drawmode: true})
         }
       }.bind(this));
 

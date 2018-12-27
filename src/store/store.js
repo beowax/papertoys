@@ -5,7 +5,7 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
     state: {
       b64texture: null,
-      isDrawmode: false,
+      isDrawmode: true,
       needs2Dupdate: false,
       needs3Dupdate: false,
       stage: null,

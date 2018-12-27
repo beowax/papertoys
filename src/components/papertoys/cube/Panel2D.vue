@@ -69,17 +69,11 @@
         this.updateCanvas();
       }, this);
 
-
-
-      
-
-
-
     },
     methods:{
       updateCanvas() {
           this.stage.update();
-          this.$store.commit('updateb64texture', {b64: document.getElementById('canvas2d').toDataURL("image/jpeg")})
+          this.$store.commit('updateb64texture', {b64: document.getElementById('canvas2d').toDataURL("image/png")})
         }
     }, 
     computed : {
@@ -87,16 +81,7 @@
             return this.$store.state.b64texture
           }
           
-    }/*,
-      watch : {
-        getb64texture(value) {
-          console.log("B64texture changed (2D panel")
-        }
-        
-      }*/
-
-
-
+    }
 }
 
  

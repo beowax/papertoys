@@ -68,7 +68,7 @@
           mixers : [],
           clock : new THREE.Clock(),
           texture : new THREE.Texture(),
-          fbxIsAnimated : false,
+          fbxIsAnimated : true,
           image : new Image(),
           //texture: null,
           // On ajuste le niveau de zoom
@@ -148,7 +148,6 @@
             this.scene.children.forEach(function(element) {
             if(element.type == "Group") {
               element.children[0].material = this.material;
-              console.log("Textured")
             }
           }.bind(this));
 
@@ -183,7 +182,6 @@
           var midtransition = Date.now() + (this.rotationgenerator.transitionduration /2);
           var endtransition = this.rotationgenerator.from.time + this.rotationgenerator.transitionduration
           var progress = Math.abs((executionTime - this.rotationgenerator.from.time) / (endtransition - this.rotationgenerator.from.time))
-          console.log("Progress :" + progress + " / executionTime: " + executionTime + " / midtransition: " + midtransition + " / endtransition: " + endtransition)
           
           if (executionTime <= endtransition) {
             if (executionTime < midtransition) {
@@ -199,7 +197,6 @@
             // On est arrivé à la fin du temps de rotation, on mets à la position finale.
             this.myObject.rotation.y = this.rotationgenerator.destination.y;
             this.moving = false;
-            console.log("Fin de rotation")
           }
 
           // On tourne si c'est nécessaire
@@ -298,10 +295,8 @@
 
         //this.material = new THREE.MeshBasicMaterial({ color: this.materialcolor, fog: true });
         
-
-        console.info("Importing FBX model...")
         var loader = new THREE.FBXLoader();
-				loader.load( 'static/fbx/cube.fbx', function ( object ) {
+				loader.load( 'static/fbx/cube.animated.fbx', function ( object ) {
 
           object.mixer = new THREE.AnimationMixer( object );
           this.mixers.push( object.mixer );
@@ -311,7 +306,7 @@
             var action = object.mixer.clipAction( object.animations[ 0 ] );
             action.play();
           } else {
-            console.info("FBX is not animated")
+            //console.info("FBX is not animated")
           }
 
           object.traverse( function ( child ) {
@@ -342,10 +337,9 @@
         this.rotationgenerator.from.y = this.rotationgenerator.position.y;
         this.rotationgenerator.destination.y += Math.PI * (howmanydegrees) / 180;
         this.moving = true;
-        console.log("Début de rotation. Destination : " + this.rotationgenerator.destination.y)
+        
       },
       resize() {
-        console.log("Resize window");
         this.viewport.aspectRatio = this.container.offsetWidth / window.innerHeight
         this.renderer.setSize(this.container.offsetWidth, window.innerHeight);
         this.camera.forEach(element => {
@@ -398,17 +392,16 @@
         window.addEventListener('resize', this.resize(), false);
       }, 
       computed : {
-          getb64texture() {
+        getb64texture() {
           return this.$store.state.b64texture
-          }
+        }
       },
       watch : {
         getb64texture(value) {
-          //console.log("Watcher : B64texture changed (3D panel) => Updating texture")
           this.image.src = value;
-          this.texture.image = this.image;
-          this.texture.needsUpdate = true;
-          this.material.map = this.texture;
+          //this.texture.image = this.image;
+          //this.texture.needsUpdate = true;
+          //this.material.map = this.texture;
           this.renderer.render( this.scene, this.camera[0]);
         }
       }

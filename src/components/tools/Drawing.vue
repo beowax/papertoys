@@ -1,7 +1,7 @@
 <template>
   <div id="drawing">
       <!--object class="svgClass" type="image/svg+xml" v-on:click="toggleDrawmode()" data="/static/toolbar/drawing/pencil.svg" draggable="false" height="30" width="30"></object-->
-      <img class="svgClass" type="image/svg+xml" v-on:click="toggleDrawmode()" src="/static/toolbar/drawing/pencil.svg" draggable="false" height="30" width="30" />
+      <img class="active" type="image/svg+xml" src="/static/toolbar/drawing/pencil.svg" draggable="false" height="30" width="30" />
   </div>
 </template>
 
@@ -10,7 +10,6 @@ export default {
     data () {
         return {
             stageLoaded: false,
-            canvas: null,
             currentShape: [],
             oldX: 0,
             oldY: 0,
@@ -64,7 +63,8 @@ export default {
 
         this.isMouseDown = false;
         this.currentShape = [];
-        createjs.Ticker.setFPS(24);
+        
+        createjs.Ticker.framerate = 24;
         createjs.Ticker.addEventListener("tick", function () {
             this.update();
         }.bind(this), this);
@@ -72,9 +72,9 @@ export default {
     },
     methods: {
         toggleDrawmode() {
-            this.isActive = !this.isActive;
+            //this.isActive = !this.isActive;
             
-            this.$store.commit('updatedrawmode', {drawmode: this.isActive})
+            this.$store.commit('updatedrawmode', {drawmode: !this.isDrawmode})
             //document.querySelector(".svgClass").getSVGDocument().getElementById("svgInternalID").setAttribute("fill", this.color[this.isActive])
         },
         /*set_pencil (params) {
@@ -85,7 +85,7 @@ export default {
         create_events () {
             createjs.Touch.enable(this.stage);
             this.stage.on("stagemousedown", function (evt) {
-                if(!this.isActive) return false;
+                if(!this.isDrawmode) return false;
                 this.isMouseDown = true;
                 var s = new createjs.Shape();
                 if ("ontouchstart" in window) {
@@ -111,21 +111,19 @@ export default {
                 this.currentShape[this.currentShape.length] = s;
             }, this);
             this.stage.on("stagemousemove", function (evt) {
-                if(!this.isActive) return false;
+                if(!this.isDrawmode) return false;
                 this.touchPos = {
                     x: evt.stageX,
                     y: evt.stageY
                 };
             }, this);
             this.stage.on("stagemouseup", function (evt) {
-                if(!this.isActive) return false;
+                if(!this.isDrawmode) return false;
                 this.isMouseDown = false;
             }, this);
         },
         update () {
-            //console.log("UPDATE ?")
-            if (this.isMouseDown && this.isActive) {
-                //console.log("YES")
+            if (this.isMouseDown && this.isDrawmode) {
                 if (this.touchPos !== null) {
                     var pt = new createjs.Point(this.touchPos.x, this.touchPos.y);
                 } else {
@@ -163,7 +161,6 @@ export default {
     watch: {
         stage(value) {
           if (!this.stageLoaded && typeof(this.stage != "undefined")) {
-            console.log("Stage loaded")
             this.create_events();
             this.stageLoaded = true;
           }
