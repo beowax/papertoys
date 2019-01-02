@@ -5,7 +5,8 @@ import Panel2D from '@/components/papertoys/cube/Panel2D'
 import Workspace from '@/components/Workspace'
 
 Vue.use(Router)
-Vue.listen(process.env.PORT || 8080);
+//Vue.listen(process.env.PORT || 8080);
+
 export default new Router({
   routes: [
     {
