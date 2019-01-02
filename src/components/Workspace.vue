@@ -22,11 +22,3 @@
   
 
 </script>
-
-<style>
-#app {
-
-  -moz-osx-font-smoothing: grayscale;
-
-}
-</style>
