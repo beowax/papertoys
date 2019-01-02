@@ -11,7 +11,7 @@
 
 <script>
   export default {
-    name: 'appHeader',
+    name: 'AppHeader',
     data () {
       return {
         msg: 'This message comes from Header component (included in App.js).'

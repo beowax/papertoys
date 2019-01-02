@@ -1,19 +1,19 @@
 <template>
     <div class="grid-2">
-        <panel2D/>
-        <panel3D/>
+        <Panel2D/>
+        <Panel3D/>
     </div>
 </template>
 
 <script>
-  import panel2D from './papertoys/cube/Panel2D.vue'
-  import panel3D from './papertoys/cube/Panel3D.vue'
+  import Panel2D from './papertoys/cube/Panel2D.vue'
+  import Panel3D from './papertoys/cube/Panel3D.vue'
 
   export default {
     name: 'Workspace',
     components: {
-      panel2D,
-      panel3D
+      Panel2D,
+      Panel3D
     }
     
   }

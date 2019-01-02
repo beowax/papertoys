@@ -6,7 +6,7 @@
 
 <script>
   export default {
-    name: 'appFooter',
+    name: 'AppFooter',
     data () {
       return {
       msg: 'NOT SET'
