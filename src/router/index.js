@@ -10,7 +10,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: '2D&3D Panels',
+      name: '2D&3D Panels WOrkspace',
       component: Workspace
     },
     {
