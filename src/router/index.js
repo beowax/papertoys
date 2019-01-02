@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Panel3D from '@/components/papertoys/cube/Panel3D'
 import Panel2D from '@/components/papertoys/cube/Panel2D'
-import Workspace from '@/components/Workspace'
+import Workspace from '@/components/workspace'
 import Test from '@/components/Test'
 
 Vue.use(Router)
