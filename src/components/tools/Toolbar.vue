@@ -14,8 +14,7 @@
     name: 'Toolbar',
     data () {
       return {
-        undoIsActive: false,
-      redoIsActive: false
+        undoIsActive: false
       }
     },
     components: {
@@ -28,6 +27,9 @@
       },
       container() {
         return this.$store.state.stageContainer
+      },
+      redoIsActive() {
+        return this.$store.state.redoIsActive
       }
     },
     mounted() {
@@ -42,25 +44,43 @@
             this.container.children[i].visible = false
             this.updateCanvas();
             done = true;
+            if (!this.redoIsActive) {
+                this.$store.commit('updateRedoIsActive', {isActive: true})
+            }
           }
           i--;
         }
       },
       redo() {
-        var i = 1;
-        var done = false;
-        while (i < this.container.children.length && !done) {
-          if (this.container.children[i].visible == false) {
-            this.container.children[i].visible = true
-            this.updateCanvas();
-            done = true;
+        if(this.redoIsActive) {
+          var i = 1;
+          var done = false;
+          while (i < this.container.children.length && !done) {
+            if (this.container.children[i].visible == false) {
+              this.container.children[i].visible = true
+              this.updateCanvas();
+              done = true;
+            }
+            i++;
           }
-          i++;
         }
       },
       updateCanvas() {
         this.stage.update();
         this.$store.commit('updateb64texture', {b64: document.getElementById('canvas2d').toDataURL("image/jpeg")})
+      }
+    },
+    watch: {
+      redoIsActive(value) {
+        if (this.redoIsActive == false) {
+          var i = this.container.children.length -1;
+          while (i > 0) {
+            if (this.container.children[i].visible == false) {
+              this.container.children.splice(i,1)
+            }
+            i--;
+          }
+        }
       }
     }
   }

@@ -6,6 +6,7 @@ export const store = new Vuex.Store({
     state: {
       b64texture: null,
       isDrawmode: true,
+      redoIsActive: false,
       needs2Dupdate: false,
       needs3Dupdate: false,
       stage: null,
@@ -24,6 +25,9 @@ export const store = new Vuex.Store({
         },
         updateStageContainer (state, payload) {
           state.stageContainer = payload.stageContainer
+        },
+        updateRedoIsActive (state, payload) {
+          state.redoIsActive = payload.isActive
         },
         // store.commit('askupdate')
         /*,

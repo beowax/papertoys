@@ -101,6 +101,11 @@
             // On va devoir rendre ca dynamique ou mettre tous les stickers aux mêmes dimensions...
             bitmapInstance.scale = draggedData.ratio;
             
+            if (this.redoIsActive) {
+              this.$store.commit('updateRedoIsActive', {isActive: false})
+            }
+            
+
             this.container.addChild(bitmapInstance);
 
             bitmapInstance.on("mousedown", function (evt) {
@@ -165,6 +170,9 @@
       },
       container() {
         return this.$store.state.stageContainer
+      },
+      redoIsActive() {
+        return this.$store.state.redoIsActive
       }
     }
   }

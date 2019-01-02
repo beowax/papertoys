@@ -36,7 +36,10 @@ export default {
         },
         container() {
             return this.$store.state.stageContainer
-        }  
+        },
+        redoIsActive() {
+          return this.$store.state.redoIsActive
+        }
     },
     mounted() {
 
@@ -88,6 +91,9 @@ export default {
             this.stage.on("stagemousedown", function (evt) {
                 if(!this.isDrawmode) return false;
                 this.isMouseDown = true;
+                if (this.redoIsActive) {
+                    this.$store.commit('updateRedoIsActive', {isActive: false})
+                }
                 var s = new createjs.Shape();
                 if ("ontouchstart" in window) {
                     this.oldX = evt.stageX;
@@ -161,11 +167,11 @@ export default {
     },
     watch: {
         stage(value) {
-          if (!this.stageLoaded && typeof(this.stage != "undefined")) {
+            if (!this.stageLoaded && typeof(this.stage != "undefined")) {
             this.create_events();
             this.stageLoaded = true;
-          }
+            }
         }
-      }
+    }
 }
 </script>
