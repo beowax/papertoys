@@ -1,10 +1,10 @@
 <template>
   <div id="content">
-    <!--AppHeader/-->
+    <AppHeader/>
     <main>
       <router-view/>
     </main>  
-    <!--AppFooter/-->
+    <AppFooter/>
   </div>
 </template>
 
