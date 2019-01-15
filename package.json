@@ -2,7 +2,7 @@
   "name": "papertoys",
   "version": "1.0.0",
   "description": "Une application pour personnaliser et fabriquer des papertoys",
-  "author": "ÏDKIDS Makerz",
+  "author": "ÏDKIDS Makers",
   "private": true,
   "scripts": {
     "_comment_heroku-prebuild": "npm install --dev",
