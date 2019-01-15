@@ -5,7 +5,7 @@
   "author": "ÏDKIDS Makers",
   "private": true,
   "scripts": {
-    "_comment_heroku-prebuild": "npm install --dev",
+    "heroku-prebuild": "export NPM_CONFIG_PRODUCTION=false;",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "build": "node build/build.js"
@@ -13,8 +13,7 @@
   "dependencies": {
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
-    "vuex": "^3.0.1",
-    "webpack-dev-server": "^2.11.3"
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
