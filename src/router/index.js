@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Panel3D from '@/components/papertoys/cube/Panel3D'
 import Panel2D from '@/components/papertoys/cube/Panel2D'
 import Workspace from '@/components/workspace'
+import Test from '@/components/Test'
 
 Vue.use(Router)
 
@@ -22,6 +23,11 @@ export default new Router({
       path: '/3D',
       name: '3D Panel',
       component: Panel3D
+    },
+    {
+      path: '/test',
+      name: 'Test',
+      component: Test
     }
   ]
 })
