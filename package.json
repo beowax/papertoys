@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "heroku-prebuild": "npm install",
-    "heroku-postbuild": "node server.js",
+    "heroku-postbuild": "node src.main.js",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "node src/main.js",
     "build": "webpack --config build/webpack.prod.conf.js"
